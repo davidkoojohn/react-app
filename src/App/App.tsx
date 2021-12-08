@@ -1,27 +1,33 @@
 import React, { lazy, Suspense } from 'react'
 import { Routes, Route, Link } from "react-router-dom"
 import logo from '../logo.svg'
-import './App.css'
 
 const Landing = lazy(() => import("../Views/Landing/Landing"))
 const About = lazy(() => import("../Views/About/About"))
+const Express = lazy(() => import("../Views/Express/Express"))
+const HookDemo = lazy(() => import("../Views/Express/HookDemo"))
 
 function App() {
   return (
     <div className="App">
-      <header>
-        <img src={logo} className="App-logo" alt="logo" />
+      <header className={"px-4 flex items-center text-white bg-gray-900 h-16"}>
+        <img src={logo} className="h-12 animate-pulse" alt="logo" />
         <div>
-          <Link to={"/"}>Home</Link>
-          <span>|</span>
-          <Link to={"/about"}>About</Link>
+          <Link className={"hover:underline"} to={"/"}>Home</Link>
+          <span className={"mx-2"}>|</span>
+          <Link className={"hover:underline"} to={"/express"}>Express</Link>
+          <span className={"mx-2"}>|</span>
+          <Link className={"hover:underline"} to={"/about"}>About</Link>
         </div>
       </header>
-      <main>
+      <main className={"px-4"}>
         <Suspense fallback={ <div>Loading...</div> }>
           <Routes>
             <Route path={"/"} element={ <Landing/> } />
             <Route path={"about"} element={ <About/> } />
+            <Route path={"express"} element={ <Express/> }>
+              <Route path={"hooks"} element={ <HookDemo/> }/>
+            </Route>
           </Routes>
         </Suspense>
       </main>
