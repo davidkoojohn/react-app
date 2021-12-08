@@ -1,29 +1,10 @@
-import { useState } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Routes, Route, Link } from "react-router-dom"
 import logo from '../logo.svg'
 import './App.css'
 
-
-function About() {
-  return (
-    <h1>About</h1>
-  )
-}
-
-function Landing() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <h1>Landing</h1>
-      <p>
-        <button type="button" onClick={() => setCount((count) => count + 1)}>
-          count is: {count}
-        </button>
-      </p>
-    </>
-  )
-}
+const Landing = lazy(() => import("../Views/Landing/Landing"))
+const About = lazy(() => import("../Views/About/About"))
 
 function App() {
   return (
@@ -37,10 +18,12 @@ function App() {
         </div>
       </header>
       <main>
-        <Routes>
-          <Route path={"/"} element={ <Landing/> } />
-          <Route path={"about"} element={ <About/> } />
-        </Routes>
+        <Suspense fallback={ <div>Loading...</div> }>
+          <Routes>
+            <Route path={"/"} element={ <Landing/> } />
+            <Route path={"about"} element={ <About/> } />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   )
