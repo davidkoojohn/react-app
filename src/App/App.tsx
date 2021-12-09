@@ -6,6 +6,7 @@ const Landing = lazy(() => import("../Views/Landing/Landing"))
 const About = lazy(() => import("../Views/About/About"))
 const Express = lazy(() => import("../Views/Express/Express"))
 const HookDemo = lazy(() => import("../Views/Express/HookDemo"))
+const Patterns = lazy(() => import("../Views/Express/Patterns"))
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path={"about"} element={ <About/> } />
             <Route path={"express"} element={ <Express/> }>
               <Route path={"hooks"} element={ <HookDemo/> }/>
+              <Route path={"patterns"} element={ <Patterns/> }/>
             </Route>
           </Routes>
         </Suspense>

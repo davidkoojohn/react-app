@@ -8,7 +8,8 @@ export default function Express() {
         <h1 className="text-3xl">React Express</h1>
         <nav className={"mx-4"}>
           <Link className={"hover:underline"} to={"/express/hooks"}>Hooks</Link>
-          {/*<span className={"mx-2"}>|</span>*/}
+          <span className={"mx-2"}>|</span>
+          <Link className={"hover:underline"} to={"/express/patterns"}>Patterns</Link>
         </nav>
       </div>
       <hr/>

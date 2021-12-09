@@ -85,8 +85,8 @@ function UseReducerComponent() {
 
 
 function UseEffect() {
-  const [count, setCount] = useState(0)
-  const color = count % 5 === 0 ? "red" : "blue"
+  const [count, setCount] = useState<number>(0)
+  const color: string = count % 5 === 0 ? "red" : "blue"
 
   useEffect(() => {
     console.log(color, count)
@@ -138,7 +138,7 @@ function UseMemo() {
   // 记住函数，除非依赖项数组发生更改
   // 依赖项发生更改，则返回一个新函数。useCallback===
   // 防止不必要的重新渲染
-  const count5 = Math.floor(count / 5)
+  const count5: number = Math.floor(count / 5)
   const memoizedFunction = useCallback(() => {
     console.log('useCallback')
   }, [count5])
