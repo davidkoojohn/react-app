@@ -1,9 +1,9 @@
 import {createContext, memo, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState} from "react"
 
-const randomDiceRoll = () => Math.floor(Math.random() * 6) + 1
+const randomDiceRoll = (): number => Math.floor(Math.random() * 6) + 1
 
 function UseStateComponent() {
-  const [diceRolls, setDiceRolls] = useState([1, 2, 3])
+  const [diceRolls, setDiceRolls] = useState<number[]>([1, 2, 3])
 
   return (
     <div className={"border border-gray-400 p-4"}>
@@ -22,12 +22,20 @@ function UseStateComponent() {
 }
 
 
+interface IAction {
+  value: string;
+  type: string
+}
+interface IInitialState {
+  color: string;
+  pet: string;
+}
+
 const types = {
   PET: 'PET',
   COLOR: 'COLOR',
 }
-
-const reducer = (state: any, action: any) => {
+const reducer = (state: any, action: IAction) => {
   switch (action.type) {
     case types.COLOR:
       return { ...state, color: action.value }
@@ -35,11 +43,10 @@ const reducer = (state: any, action: any) => {
       return { ...state, pet: action.value }
   }
 }
-
 const initialState = {
   color: 'black',
   pet: 'cat',
-}
+} as IInitialState
 
 function UseReducerComponent() {
   const [state, dispatch] = useReducer(reducer, initialState)
