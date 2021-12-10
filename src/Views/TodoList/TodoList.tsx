@@ -21,8 +21,8 @@ interface IFormProps {
   itemText: string
   setItemText: (text: string) => void
   onSubmit: () => void
-  filterState: string
-  setFilterState: (text: string) => void
+  filterState: IFilter
+  setFilterState: (text: IFilter) => void
 }
 
 function Form({ itemText, setItemText, filterState, setFilterState, onSubmit }: IFormProps) {
@@ -52,7 +52,7 @@ function Form({ itemText, setItemText, filterState, setFilterState, onSubmit }: 
           className={"border border-gray-400"}
           value={filterState}
           onChange={e => {
-            setFilterState(e.target.value)
+            setFilterState(e.target.value as IFilter)
           }}
         >
           <option value={"all"}>All</option>
@@ -66,7 +66,7 @@ function Form({ itemText, setItemText, filterState, setFilterState, onSubmit }: 
 
 interface IListProps {
   data: ITodoList
-  filterState: string
+  filterState: IFilter
   onDelete: (item: ITodoItem) => void
 }
 function List({ data, onDelete, filterState }: IListProps) {
@@ -124,7 +124,7 @@ function BottomOpt({ onClear, disabled }: IBottomOptProps) {
 
 export default function TodoList() {
   const [itemText, setItemText] = useState<string>("")
-  const [filterState, setFilterState] = useState<string>("all")
+  const [filterState, setFilterState] = useState<IFilter>("all")
 
   const [listState, setListState] = useState<ITodoList>([
     { id: 1, title: "item 1", completed: false },
