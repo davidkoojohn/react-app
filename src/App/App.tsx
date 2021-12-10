@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { Routes, Route, Link } from "react-router-dom"
-import logo from '../logo.svg'
+import logo from '../assets/logo.svg'
 
 const Landing = lazy(() => import("../Views/Landing/Landing"))
 const About = lazy(() => import("../Views/About/About"))
