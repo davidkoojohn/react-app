@@ -1,6 +1,6 @@
 
 import lyf from "../../assets/lyf.webp"
-import {useState} from "react";
+import {ReactNode, useState} from "react";
 
 
 interface IStarButtonProps {
@@ -83,8 +83,55 @@ function ArticleList() {
   )
 }
 
+interface ITabsProps {
+  types: TabType[]
+  title: (type: TabType) => ReactNode
+  content: (type: TabType) => ReactNode
+}
+function Tabs({ content, types, title }: ITabsProps) {
+  const [activeType, setActiveType] = useState<TabType>(types[0])
+  return (
+    <dl>
+      <dt className={"border-b"}>
+        {types.map(item => (
+          <button
+            className={"mr-2 px-2 py-1 border-b-2 border-gray-100 text-gray-500 "+`${item === activeType && "border-gray-700 text-gray-700"}`}
+            key={item}
+            onClick={() => setActiveType(item)}
+          >
+            {title(item)}
+          </button>
+        ))}
+      </dt>
+      <dd className={"pt-4"}>
+        <div>{content(activeType)}</div>
+      </dd>
+    </dl>
+  )
+}
+
+const TABS_DATA = [
+  {type: "Overview", content: "Overview Overview"},
+  {type: "Wallet", content: "Wallet"},
+  {type: "Vault", content: "test Vault"},
+]
+type TabType = "Overview" | "Wallet" | "Vault"
+
 export default function Dashboard() {
   const [watched, setWatched] = useState<boolean>(false)
+
+  const content = (type: TabType) => {
+    switch (type) {
+      case "Overview":
+        return <div>
+          <Info/>
+          <ArticleList/>
+        </div>
+      case "Wallet":
+      case "Vault":
+        return <h1>{TABS_DATA.find(item => item.type === type)?.content}</h1>
+    }
+  }
 
   return (
     <div className={""}>
@@ -92,18 +139,15 @@ export default function Dashboard() {
         <span className={"text-3xl"}>Dashboard</span>
         <StarButton watched={watched} onWatch={setWatched}/>
       </div>
-      <div className={"border p-4"}>
-        <Info/>
-        <ArticleList/>
-        Dashboard
-        <br/>
-        Dashboard
-        <br/>
-        Dashboard
-        <br/>
-        Dashboard
-        <br/>
-      </div>
+      <Tabs
+        types={TABS_DATA.map(item => item.type as TabType)}
+        title={
+          (type) => TABS_DATA.find(item => item.type === type)?.type
+        }
+        content={
+          (type) => content(type)
+        }
+      />
     </div>
   )
 }
