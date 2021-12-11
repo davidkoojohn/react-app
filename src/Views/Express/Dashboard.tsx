@@ -2,6 +2,7 @@ import {ReactNode, useEffect, useState} from "react";
 import useFetch from "../../hooks/useFetch";
 import * as api from "../../api"
 import lyf from "../../assets/lyf.webp"
+import {useResource} from "../../utils/resource";
 
 
 interface IStarButtonProps {
@@ -138,7 +139,7 @@ type IInfo = {
   links: ILink[]
 }
 
-function Info({ content, title, links }) {
+function Info({ content, title, links }: IInfo) {
   return (
     <div className={"border p-6 rounded-lg"}>
       <div className={"text-2xl"}>{title}</div>
@@ -173,7 +174,7 @@ const TRADE_DATA = [
 
 export default function Dashboard() {
   const [watched, setWatched] = useState<boolean>(false)
-  const info = useFetch(api.info(1))
+  const info = useResource<IInfo>(api.info(1))
 
   const handleTrade = (val: number) => {
     console.log(val)
@@ -183,7 +184,7 @@ export default function Dashboard() {
     switch (type) {
       case "Overview":
         return <div>
-          {info.type === "success" && <Info content={info.value.content} title={info.value.title} links={info.value.links}/>}
+          <Info content={info.content} title={info.title} links={info.links}/>
           <Trade data={TRADE_DATA} onClick={handleTrade} />
           <ArticleList/>
         </div>
