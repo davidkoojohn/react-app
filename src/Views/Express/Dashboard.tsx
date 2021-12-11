@@ -1,4 +1,3 @@
-
 import lyf from "../../assets/lyf.webp"
 import {ReactNode, useState} from "react";
 
@@ -112,29 +111,42 @@ function Tabs({ content, types, title }: ITabsProps) {
 
 interface ITradeItem {
   type: string
-  value: string
+  value: number
 }
 interface ITradeProps {
   data: ITradeItem[]
+  onClick: (val: number) => void
 }
-function Trade({ data }: ITradeProps) {
+function Trade({ data, onClick }: ITradeProps) {
+  const [val, setVal] = useState<string>("")
+  const current = (type: string) => data.find(item => item.type === type)
+
   return (
     <div className={"border rounded-md mt-4 p-6"}>
       <div className={"text-2xl pb-4"}>Trade</div>
       <Tabs
         types={data.map(it => it.type)}
-        title={(type) => data.find(it => it.type === type)?.type}
+        title={(type) => current(type)?.type}
         content={
           (type) => (
             <div className={"flex flex-col justify-center items-center h-40"}>
-              <span className={"text-6xl text-gray-400"}>
-                {data.find(it => it.type === type)?.value}
-              </span>
+              <input
+                className={"text-6xl text-gray-800 placeholder-opacity-50 text-center w-80 focus:outline-none"}
+                placeholder="0"
+                type={"number"}
+                value={val}
+                onChange={(e) => {setVal(e.target.value)}}
+              />
+              <span className={"text-sm text-gray-400"}>Enter a value</span>
               <button
                 className={"border rounded-md py-2 px-6 mt-4"}
-                disabled={true}
+                disabled={val.length === 0}
+                onClick={() => {
+                  onClick(+val)
+                  setVal("")
+                }}
               >
-                {data.find(it => it.type === type)?.type}
+                {current(type)?.type}
               </button>
             </div>
           )
@@ -151,20 +163,24 @@ const TABS_DATA = [
   {type: "Vault", content: "test Vault"},
 ]
 const TRADE_DATA = [
-  {type: "Buy", value: "0"},
-  {type: "Sell", value: "0"},
-  {type: "Convert", value: "0"},
+  {type: "Buy", value: 0},
+  {type: "Sell", value: 0},
+  {type: "Convert", value: 0},
 ] as ITradeItem[]
 
 export default function Dashboard() {
   const [watched, setWatched] = useState<boolean>(false)
+
+  const handleTrade = (val: number) => {
+    console.log(val)
+  }
 
   const content = (type: string) => {
     switch (type) {
       case "Overview":
         return <div>
           <Info/>
-          <Trade data={TRADE_DATA}/>
+          <Trade data={TRADE_DATA} onClick={handleTrade} />
           <ArticleList/>
         </div>
       case "Wallet":
