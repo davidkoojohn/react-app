@@ -84,18 +84,18 @@ function ArticleList() {
 }
 
 interface ITabsProps {
-  types: TabType[]
-  title: (type: TabType) => ReactNode
-  content: (type: TabType) => ReactNode
+  types: string[]
+  title: (type: string) => ReactNode
+  content: (type: string) => ReactNode
 }
 function Tabs({ content, types, title }: ITabsProps) {
-  const [activeType, setActiveType] = useState<TabType>(types[0])
+  const [activeType, setActiveType] = useState<string>(types[0])
   return (
     <dl>
       <dt className={"border-b"}>
         {types.map(item => (
           <button
-            className={"mr-2 px-2 py-1 border-b-2 border-gray-100 text-gray-500 "+`${item === activeType && "border-gray-700 text-gray-700"}`}
+            className={"mr-2 px-2 py-1 text-gray-500 "+`${item === activeType && "border-b-2 border-gray-700 text-gray-700"}`}
             key={item}
             onClick={() => setActiveType(item)}
           >
@@ -110,21 +110,61 @@ function Tabs({ content, types, title }: ITabsProps) {
   )
 }
 
+interface ITradeItem {
+  type: string
+  value: string
+}
+interface ITradeProps {
+  data: ITradeItem[]
+}
+function Trade({ data }: ITradeProps) {
+  return (
+    <div className={"border rounded-md mt-4 p-6"}>
+      <div className={"text-2xl pb-4"}>Trade</div>
+      <Tabs
+        types={data.map(it => it.type)}
+        title={(type) => data.find(it => it.type === type)?.type}
+        content={
+          (type) => (
+            <div className={"flex flex-col justify-center items-center h-40"}>
+              <span className={"text-6xl text-gray-400"}>
+                {data.find(it => it.type === type)?.value}
+              </span>
+              <button
+                className={"border rounded-md py-2 px-6 mt-4"}
+                disabled={true}
+              >
+                {data.find(it => it.type === type)?.type}
+              </button>
+            </div>
+          )
+        }
+      />
+    </div>
+  )
+}
+
+type TabType = "Overview" | "Wallet" | "Vault"
 const TABS_DATA = [
   {type: "Overview", content: "Overview Overview"},
   {type: "Wallet", content: "Wallet"},
   {type: "Vault", content: "test Vault"},
 ]
-type TabType = "Overview" | "Wallet" | "Vault"
+const TRADE_DATA = [
+  {type: "Buy", value: "0"},
+  {type: "Sell", value: "0"},
+  {type: "Convert", value: "0"},
+] as ITradeItem[]
 
 export default function Dashboard() {
   const [watched, setWatched] = useState<boolean>(false)
 
-  const content = (type: TabType) => {
+  const content = (type: string) => {
     switch (type) {
       case "Overview":
         return <div>
           <Info/>
+          <Trade data={TRADE_DATA}/>
           <ArticleList/>
         </div>
       case "Wallet":
