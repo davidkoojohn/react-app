@@ -1,4 +1,4 @@
-import {ReactNode, useState} from "react";
+import {memo, ReactNode, useState} from "react";
 import * as api from "../../api"
 import {useResource} from "../../utils/resource";
 
@@ -202,7 +202,7 @@ function Info({ content, title, links }: IInfo) {
   )
 }
 
-function Overview() {
+const Overview = memo(() => {
   const info = useResource<IInfo>(api.info(1))
   const articles = useResource<Article[]>(api.articles())
 
@@ -211,7 +211,7 @@ function Overview() {
     <Trade price={info.price} />
     <ArticleList data={articles}/>
   </div>
-}
+})
 
 export default function Dashboard() {
   const [selectIndex, setSelectIndex] = useState<number>(0)
