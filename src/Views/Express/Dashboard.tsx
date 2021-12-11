@@ -43,7 +43,7 @@ interface IArticlesProps {
 function ArticleItem({ title, summary, author, formattedDate, image }: Article) {
   return (
     <div className={"flex justify-between py-4 border-b hover:bg-blue-100 px-4"}>
-      <div>
+      <div className={"mr-6"}>
         <div className={"text-2xl"}>{title}</div>
         <div className={"text-sm my-4 text-gray-600"}>{summary}</div>
         <div className={"text-md text-gray-600"}>
@@ -75,46 +75,47 @@ function ArticleList({ data }: IArticlesProps) {
   )
 }
 
-interface ITabsProps {
-  types: string[]
-  title: (type: string) => ReactNode
-  content: (type: string) => ReactNode
+
+interface ITabItem {
+  title: string,
+  content: ReactNode
 }
-function Tabs({ content, types, title }: ITabsProps) {
-  const [activeType, setActiveType] = useState<string>(types[0])
+interface ITabsProps {
+  tabs: ITabItem[]
+  selectedIndex: number
+  setSelectIndex: (index: number) => void
+}
+function Tabs({ tabs, selectedIndex, setSelectIndex }: ITabsProps) {
+  const tabButtons = tabs.map((item, index) => (
+    <button
+      className={"mr-2 px-2 py-1 text-gray-500 "+`${index === selectedIndex && "border-b-2 border-gray-700 text-gray-700"}`}
+      key={item.title}
+      onClick={() => setSelectIndex(index)}
+    >
+      {item.title}
+    </button>
+  ))
+
   return (
     <dl>
       <dt className={"border-b"}>
-        {types.map(item => (
-          <button
-            className={"mr-2 px-2 py-1 text-gray-500 "+`${item === activeType && "border-b-2 border-gray-700 text-gray-700"}`}
-            key={item}
-            onClick={() => setActiveType(item)}
-          >
-            {title(item)}
-          </button>
-        ))}
+        {tabButtons}
       </dt>
       <dd className={"pt-4"}>
-        <div>{content(activeType)}</div>
+        <div>{tabs[selectedIndex].content}</div>
       </dd>
     </dl>
   )
 }
 
-interface ITradeItem {
-  type: TradeType
-  value: number
+interface ITradeContentProps {
+  price: string
+  type: string
   symbol: string
 }
-interface ITradeProps {
-  data: ITradeItem[],
-  price: string
-  onClick: (val: number) => void
-}
-function Trade({ data, onClick, price }: ITradeProps) {
+
+function TradeContent({ price, type, symbol }: ITradeContentProps) {
   const [val, setVal] = useState<string>("")
-  const current = (type: string) => data.find(item => item.type === type)
 
   const toTransform = (type: string) => {
     switch (type) {
@@ -128,35 +129,42 @@ function Trade({ data, onClick, price }: ITradeProps) {
   }
 
   return (
+    <div className={"flex flex-col justify-center items-center h-40"}>
+      <input
+        className={"text-6xl text-gray-800 placeholder-opacity-50 text-center w-full focus:outline-none"}
+        placeholder="0"
+        type={"number"}
+        value={val}
+        onChange={(e) => {setVal(e.target.value)}}
+      />
+      <span className={"text-sm text-gray-400"}>Enter a value in {symbol}</span>
+      <button
+        className={"border rounded-md py-2 px-6 mt-4"}
+        disabled={val.length === 0}
+      >
+        {type} {val.length > 0 && toTransform(type)}
+      </button>
+    </div>
+  )
+}
+
+interface ITradeProps {
+  price: string
+}
+function Trade({ price }: ITradeProps) {
+  const [selectIndex, setSelectIndex] = useState<number>(0)
+
+  return (
     <div className={"border rounded-md mt-4 p-6"}>
       <div className={"text-2xl pb-4"}>Trade</div>
       <Tabs
-        types={data.map(it => it.type)}
-        title={(type) => current(type)?.type}
-        content={
-          (type) => (
-            <div className={"flex flex-col justify-center items-center h-40"}>
-              <input
-                className={"text-6xl text-gray-800 placeholder-opacity-50 text-center w-full focus:outline-none"}
-                placeholder="0"
-                type={"number"}
-                value={val}
-                onChange={(e) => {setVal(e.target.value)}}
-              />
-              <span className={"text-sm text-gray-400"}>Enter a value in {current(type)?.symbol}</span>
-              <button
-                className={"border rounded-md py-2 px-6 mt-4"}
-                disabled={val.length === 0}
-                onClick={() => {
-                  onClick(+val)
-                  setVal("")
-                }}
-              >
-                {current(type)?.type} {val.length > 0 && toTransform(type)}
-              </button>
-            </div>
-          )
-        }
+        tabs={[
+          { title: "Buy", content: <TradeContent type={"Buy"} price={price} symbol={"USD"} /> },
+          { title: "Sell", content: <TradeContent type={"Sell"} price={price} symbol={"BTC"} /> },
+          { title: "Convert", content: <TradeContent type={"Buy"} price={price} symbol={"USD"} /> },
+        ]}
+        selectedIndex={selectIndex}
+        setSelectIndex={setSelectIndex}
       />
     </div>
   )
@@ -194,41 +202,20 @@ function Info({ content, title, links }: IInfo) {
   )
 }
 
-type TabType = "Overview" | "Wallet" | "Vault"
-const TABS_DATA = [
-  {type: "Overview", content: "Overview Overview"},
-  {type: "Wallet", content: "Wallet"},
-  {type: "Vault", content: "test Vault"},
-]
-type TradeType = "Buy" | "Sell" | "Convert"
-const TRADE_DATA = [
-  {type: "Buy", value: 0, symbol: "USD"},
-  {type: "Sell", value: 0, symbol: "BTC"},
-  {type: "Convert", value: 0, symbol: "USD"},
-] as ITradeItem[]
-
-export default function Dashboard() {
-  const [watched, setWatched] = useState<boolean>(false)
+function Overview() {
   const info = useResource<IInfo>(api.info(1))
   const articles = useResource<Article[]>(api.articles())
 
-  const handleTrade = (val: number) => {
-    console.log(val)
-  }
+  return <div>
+    <Info price={info.price} content={info.content} title={info.title} links={info.links}/>
+    <Trade price={info.price} />
+    <ArticleList data={articles}/>
+  </div>
+}
 
-  const content = (type: string) => {
-    switch (type) {
-      case "Overview":
-        return <div>
-          <Info price={info.price} content={info.content} title={info.title} links={info.links}/>
-          <Trade data={TRADE_DATA} price={info.price} onClick={handleTrade} />
-          <ArticleList data={articles}/>
-        </div>
-      case "Wallet":
-      case "Vault":
-        return <h1>{TABS_DATA.find(item => item.type === type)?.content}</h1>
-    }
-  }
+export default function Dashboard() {
+  const [selectIndex, setSelectIndex] = useState<number>(0)
+  const [watched, setWatched] = useState<boolean>(false)
 
   return (
     <div className={""}>
@@ -237,13 +224,13 @@ export default function Dashboard() {
         <StarButton watched={watched} onWatch={setWatched}/>
       </div>
       <Tabs
-        types={TABS_DATA.map(item => item.type as TabType)}
-        title={
-          (type) => TABS_DATA.find(item => item.type === type)?.type
-        }
-        content={
-          (type) => content(type)
-        }
+        tabs={[
+          { title: "Overview", content: <Overview /> },
+          { title: "Wallet", content: "Test content" },
+          { title: "Vault", content: "Test content" },
+        ]}
+        selectedIndex={selectIndex}
+        setSelectIndex={setSelectIndex}
       />
     </div>
   )
