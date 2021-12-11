@@ -83,16 +83,29 @@ function Tabs({ content, types, title }: ITabsProps) {
 }
 
 interface ITradeItem {
-  type: string
+  type: TradeType
   value: number
+  symbol: string
 }
 interface ITradeProps {
-  data: ITradeItem[]
+  data: ITradeItem[],
+  price: string
   onClick: (val: number) => void
 }
-function Trade({ data, onClick }: ITradeProps) {
+function Trade({ data, onClick, price }: ITradeProps) {
   const [val, setVal] = useState<string>("")
   const current = (type: string) => data.find(item => item.type === type)
+
+  const toTransform = (type: string) => {
+    switch (type) {
+      case "Buy":
+        return parseFloat((Number(val) / Number(price)).toFixed(7)).toString() + " BTC"
+      case "Sell":
+        return (Number(val) * Number(price)).toString() + " USD"
+      case "Convert":
+        return parseFloat((Number(val) / Number(price)).toFixed(7)).toString() + " BTC"
+    }
+  }
 
   return (
     <div className={"border rounded-md mt-4 p-6"}>
@@ -104,13 +117,13 @@ function Trade({ data, onClick }: ITradeProps) {
           (type) => (
             <div className={"flex flex-col justify-center items-center h-40"}>
               <input
-                className={"text-6xl text-gray-800 placeholder-opacity-50 text-center w-80 focus:outline-none"}
+                className={"text-6xl text-gray-800 placeholder-opacity-50 text-center w-full focus:outline-none"}
                 placeholder="0"
                 type={"number"}
                 value={val}
                 onChange={(e) => {setVal(e.target.value)}}
               />
-              <span className={"text-sm text-gray-400"}>Enter a value</span>
+              <span className={"text-sm text-gray-400"}>Enter a value in {current(type)?.symbol}</span>
               <button
                 className={"border rounded-md py-2 px-6 mt-4"}
                 disabled={val.length === 0}
@@ -119,7 +132,7 @@ function Trade({ data, onClick }: ITradeProps) {
                   setVal("")
                 }}
               >
-                {current(type)?.type}
+                {current(type)?.type} {val.length > 0 && toTransform(type)}
               </button>
             </div>
           )
@@ -136,6 +149,7 @@ type ILink = {
 type IInfo = {
   content: string
   title: string
+  price: string
   links: ILink[]
 }
 
@@ -166,10 +180,11 @@ const TABS_DATA = [
   {type: "Wallet", content: "Wallet"},
   {type: "Vault", content: "test Vault"},
 ]
+type TradeType = "Buy" | "Sell" | "Convert"
 const TRADE_DATA = [
-  {type: "Buy", value: 0},
-  {type: "Sell", value: 0},
-  {type: "Convert", value: 0},
+  {type: "Buy", value: 0, symbol: "USD"},
+  {type: "Sell", value: 0, symbol: "BTC"},
+  {type: "Convert", value: 0, symbol: "USD"},
 ] as ITradeItem[]
 
 export default function Dashboard() {
@@ -184,8 +199,8 @@ export default function Dashboard() {
     switch (type) {
       case "Overview":
         return <div>
-          <Info content={info.content} title={info.title} links={info.links}/>
-          <Trade data={TRADE_DATA} onClick={handleTrade} />
+          <Info price={info.price} content={info.content} title={info.title} links={info.links}/>
+          <Trade data={TRADE_DATA} price={info.price} onClick={handleTrade} />
           <ArticleList/>
         </div>
       case "Wallet":
