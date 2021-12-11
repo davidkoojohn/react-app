@@ -1,7 +1,5 @@
-import {ReactNode, useEffect, useState} from "react";
-import useFetch from "../../hooks/useFetch";
+import {ReactNode, useState} from "react";
 import * as api from "../../api"
-import lyf from "../../assets/lyf.webp"
 import {useResource} from "../../utils/resource";
 
 
@@ -29,27 +27,49 @@ function StarButton({ watched, onWatch }: IStarButtonProps) {
   )
 }
 
-function ArticleItem() {
+interface Article {
+  author: string
+  formattedDate: string
+  id: number
+  image: string
+  summary: string
+  title: string
+  url: string
+}
+interface IArticlesProps {
+  data: Array<Article>
+}
+
+function ArticleItem({ title, summary, author, formattedDate, image }: Article) {
   return (
     <div className={"flex justify-between py-4 border-b hover:bg-blue-100 px-4"}>
       <div>
-        <div className={"text-2xl"}>文章标题</div>
-        <div className={"text-sm my-4 text-gray-600"}>文章描述文章描述文章描述文章描述</div>
+        <div className={"text-2xl"}>{title}</div>
+        <div className={"text-sm my-4 text-gray-600"}>{summary}</div>
         <div className={"text-md text-gray-600"}>
-          <span className={"mr-10"}>John</span>
-          <span>Jan 20</span>
+          <span className={"mr-10"}>{author}</span>
+          <span>{formattedDate}</span>
         </div>
       </div>
-      <img className={"bg-gray-300 h-40 w-40 rounded-lg object-cover"} src={lyf} alt=""/>
+      <img className={"bg-gray-300 h-40 w-40 rounded-lg object-cover"} src={image} alt=""/>
     </div>
   )
 }
 
-function ArticleList() {
+function ArticleList({ data }: IArticlesProps) {
   return (
     <div className={"border rounded-lg p-6 mt-4"}>
-      {[1,2,3,3,4,4].map((item, index) => (
-        <ArticleItem key={index}/>
+      {data.map((item, index) => (
+        <ArticleItem
+          key={item.id}
+          author={item.author}
+          formattedDate={item.formattedDate}
+          id={item.id}
+          image={item.image}
+          summary={item.summary}
+          title={item.title}
+          url={item.url}
+        />
       ))}
     </div>
   )
@@ -190,6 +210,7 @@ const TRADE_DATA = [
 export default function Dashboard() {
   const [watched, setWatched] = useState<boolean>(false)
   const info = useResource<IInfo>(api.info(1))
+  const articles = useResource<Article[]>(api.articles())
 
   const handleTrade = (val: number) => {
     console.log(val)
@@ -201,7 +222,7 @@ export default function Dashboard() {
         return <div>
           <Info price={info.price} content={info.content} title={info.title} links={info.links}/>
           <Trade data={TRADE_DATA} price={info.price} onClick={handleTrade} />
-          <ArticleList/>
+          <ArticleList data={articles}/>
         </div>
       case "Wallet":
       case "Vault":
