@@ -1,5 +1,7 @@
+import {ReactNode, useEffect, useState} from "react";
+import useFetch from "../../hooks/useFetch";
+import * as api from "../../api"
 import lyf from "../../assets/lyf.webp"
-import {ReactNode, useState} from "react";
 
 
 interface IStarButtonProps {
@@ -23,36 +25,6 @@ function StarButton({ watched, onWatch }: IStarButtonProps) {
     >
       {icon}&nbsp;Watch
     </button>
-  )
-}
-
-function InfoResource() {
-  return (
-    <>
-      <div className={"text-2xl"}>Title</div>
-      <p className={"my-4 text-sm text-gray-600"}>This is an Info component</p>
-      <dl>
-        <dt className={"text-sm text-gray-600"}>RESOURCES</dt>
-        <dd className={"p-2"}>
-          <ul className={"list-disc ml-6 text-blue-500"}>
-            <li>
-              <a href="">Official website</a>
-            </li>
-            <li>
-              <a href="">Official website</a>
-            </li>
-          </ul>
-        </dd>
-      </dl>
-    </>
-  )
-}
-
-function Info() {
-  return (
-    <div className={"border p-6 rounded-lg"}>
-      <InfoResource/>
-    </div>
   )
 }
 
@@ -156,6 +128,37 @@ function Trade({ data, onClick }: ITradeProps) {
   )
 }
 
+type ILink = {
+  url: string
+  title: string
+}
+type IInfo = {
+  content: string
+  title: string
+  links: ILink[]
+}
+
+function Info({ content, title, links }) {
+  return (
+    <div className={"border p-6 rounded-lg"}>
+      <div className={"text-2xl"}>{title}</div>
+      <p className={"my-4 text-sm text-gray-600"}>{content}</p>
+      <dl>
+        <dt className={"text-sm text-gray-600"}>RESOURCES</dt>
+        <dd className={"p-2"}>
+          <ul className={"list-disc ml-6 text-blue-500"}>
+            {links.map(item => (
+              <li key={item.title}>
+                <a href={item.url}>{item.title}</a>
+              </li>
+            ))}
+          </ul>
+        </dd>
+      </dl>
+    </div>
+  )
+}
+
 type TabType = "Overview" | "Wallet" | "Vault"
 const TABS_DATA = [
   {type: "Overview", content: "Overview Overview"},
@@ -170,6 +173,7 @@ const TRADE_DATA = [
 
 export default function Dashboard() {
   const [watched, setWatched] = useState<boolean>(false)
+  const info = useFetch(api.info(1))
 
   const handleTrade = (val: number) => {
     console.log(val)
@@ -179,7 +183,7 @@ export default function Dashboard() {
     switch (type) {
       case "Overview":
         return <div>
-          <Info/>
+          {info.type === "success" && <Info content={info.value.content} title={info.value.title} links={info.value.links}/>}
           <Trade data={TRADE_DATA} onClick={handleTrade} />
           <ArticleList/>
         </div>
