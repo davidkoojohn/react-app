@@ -6,7 +6,7 @@ import App from './App/App'
 import "tailwindcss/tailwind.css"
 
 import store from "./store"
-import { addToCart } from "./store/actions/cart_actions"
+import { addToCart, updateCart, deleteFromCart } from "./store/actions/cart_actions"
 
 console.log("initial state: ", store.getState());
 
@@ -17,6 +17,9 @@ let unsubscribe = store.subscribe(() => {
 store.dispatch(addToCart('Coffee 500gm', 1, 250));
 store.dispatch(addToCart('Flour 1kg', 2, 110));
 store.dispatch(addToCart('Juice 2L', 1, 250));
+
+store.dispatch(updateCart("Coffee 500gm", 111, 23))
+store.dispatch(deleteFromCart("Flour 1kg"))
 
 unsubscribe()
 
