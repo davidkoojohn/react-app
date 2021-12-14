@@ -1,7 +1,8 @@
 import {ReactNode, useState} from "react";
 import { connect } from "react-redux"
 import { TodoItem } from "../../store/reducers/todo_reducer"
-import { toggleTodo, addTodo } from "../../store/actions/todo_actions"
+import { toggleTodo, addTodo, setVisibility } from "../../store/actions/todo_actions"
+import { VisibilityFilters } from "../../store/types/todo_types"
 
 interface ITodoProps {
   onClick: () => void
@@ -47,47 +48,52 @@ const TodoList = connect(
 })
 
 interface ITodoLinkProps {
-  active?: boolean
+  filter: VisibilityFilters
+  active: VisibilityFilters
   children: ReactNode
-  onClick?: () => void
+  onClick: (filter: VisibilityFilters) => void
 }
-const TodoLink = ({ active, children, onClick }: ITodoLinkProps) => {
-  if (active) {
-    return <span>{ children }</span>
+
+const FilterLink = connect(
+  (state: any) => ({
+    active: state.visibilityFilter
+  }),
+  (dispatch) => ({
+    onClick: (filter: VisibilityFilters) => dispatch(setVisibility(filter))
+  })
+)(({ active, children, filter, onClick }: ITodoLinkProps) => {
+  if (active === filter) {
+    return <span className={"border px-2 mx-2 bg-green-400 inline-block"}>{ children }</span>
   }
   return (
-    <a
-      href=""
-      onClick={
-        event => {
-          event.preventDefault()
-        }
-      }
+    <button
+      className={"border px-2 mx-2"}
+      onClick={() => onClick(filter)}
     >
       {children}
-    </a>
+    </button>
   )
-}
+})
 
 const FilterFooter = () => (
   <div className={"border px-2 py-2"}>
-    Show: <TodoLink>All</TodoLink>
+    Show: <FilterLink filter={VisibilityFilters.SHOW_ALL}>All</FilterLink>
     {', '}
-    <TodoLink>Active</TodoLink>
+    <FilterLink filter={VisibilityFilters.SHOW_ACTIVE}>Active</FilterLink>
     {', '}
-    <TodoLink>Completed</TodoLink>
+    <FilterLink filter={VisibilityFilters.SHOW_COMPLETED}>Completed</FilterLink>
   </div>
 )
 
 interface IAddTodoProps {
-  addTodo: (text: string) => void
+  onClick: (text: string) => void
 }
 const AddTodo = connect(
   null,
   (dispatch) => ({
-    addTodo: (text: string) => dispatch(addTodo(text))
+    onClick: (text: string) => dispatch(addTodo(text))
   })
-)(({ addTodo }: IAddTodoProps) => {
+)(({ onClick }: IAddTodoProps) => {
   const [text, setText] = useState<string>("")
   return (
     <div>
@@ -99,7 +105,7 @@ const AddTodo = connect(
             if (!text.trim()) {
               return
             }
-            addTodo(text)
+            onClick(text)
             setText("")
           }
         }
