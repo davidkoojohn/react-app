@@ -1,4 +1,7 @@
+export const REQUEST_POSTS = 'REQUEST_POSTS'
 export const SELECT_SUBREDDIT = "SELECT_SUBREDDIT"
+export const RECEIVE_POSTS = 'RECEIVE_POSTS'
+export const INVALIDATE_SUBREDDIT = 'INVALIDATE_SUBREDDIT'
 
 export function selectSubreddit(subreddit: string) {
   return {
@@ -7,16 +10,21 @@ export function selectSubreddit(subreddit: string) {
   }
 }
 
-export const REQUEST_POSTS = 'REQUEST_POSTS'
-function requestPosts(subreddit: any) {
+export function invalidateSubreddit(subreddit: string) {
+  return {
+    type: INVALIDATE_SUBREDDIT,
+    subreddit
+  }
+}
+
+function requestPosts(subreddit: string) {
   return {
     type: REQUEST_POSTS,
     subreddit
   }
 }
 
-export const RECEIVE_POSTS = 'RECEIVE_POSTS'
-function receivePosts(subreddit: any, json: any) {
+function receivePosts(subreddit: string, json: any) {
   return {
     type: RECEIVE_POSTS,
     subreddit,
@@ -24,15 +32,6 @@ function receivePosts(subreddit: any, json: any) {
     receivedAt: Date.now()
   }
 }
-
-export const INVALIDATE_SUBREDDIT = 'INVALIDATE_SUBREDDIT'
-export function invalidateSubreddit(subreddit: any) {
-  return {
-    type: INVALIDATE_SUBREDDIT,
-    subreddit
-  }
-}
-
 
 export function fetchPosts(subreddit: string) {
   return (dispatch: any) => {

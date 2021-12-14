@@ -1,8 +1,8 @@
 import {
   SELECT_SUBREDDIT,
-  RECEIVE_POSTS,
-  REQUEST_POSTS,
   INVALIDATE_SUBREDDIT,
+  REQUEST_POSTS,
+  RECEIVE_POSTS,
 } from "../actions/reddit_actions"
 
 export function selectedSubreddit(state = 'reactjs', action: any) {
@@ -14,11 +14,14 @@ export function selectedSubreddit(state = 'reactjs', action: any) {
   }
 }
 
-export default function posts(state: any = {
-  isFetching: false,
-  didInvalidate: false,
-  items: []
-}, action: any) {
+export default function posts(
+  state: any = {
+    isFetching: false,
+    didInvalidate: false,
+    items: []
+  },
+  action: any
+) {
   switch (action.type) {
     case INVALIDATE_SUBREDDIT:
       return Object.assign({}, state, {
