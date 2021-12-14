@@ -1,5 +1,6 @@
 import {ReactNode, useState} from "react";
-
+import { connect } from "react-redux"
+import { TodoItem } from "../../store/reducers/todo_reducer"
 
 interface ITodoProps {
   onClick: () => void
@@ -8,24 +9,24 @@ interface ITodoProps {
 }
 const Todo = ({ text, completed, onClick }: ITodoProps) => (
   <li
-    onClick={() => onClick}
+    onClick={onClick}
     className={`${completed && "line-though"}`}
   >
     {text}
   </li>
 )
 
-type TodoItem = {
-  id: number
-  text: string
-  completed: boolean
-}
 interface ITodoListProps {
   onClick: (id: number) => void
   todos: TodoItem[]
 }
-const TodoList = ({ todos, onClick }: ITodoListProps) => {
 
+const TodoList = connect(
+  (state: any) => ({
+    todos: state.todoReducer
+  }),
+  (dispatch) => ({})
+)(({ todos, onClick }: ITodoListProps) => {
   const empty = <div>No data!</div>
   const list = todos.map(item => (
     <Todo
@@ -40,7 +41,7 @@ const TodoList = ({ todos, onClick }: ITodoListProps) => {
       {todos.length === 0 ? empty : list}
     </ul>
   )
-}
+})
 
 interface ITodoLinkProps {
   active?: boolean
@@ -108,7 +109,7 @@ export default function TodoApp () {
   return (
     <>
       <AddTodo/>
-      <TodoList onClick={(id) => console.log(id)} todos={[]}/>
+      <TodoList onClick={(id) => console.log(id)}/>
       <FilterFooter/>
     </>
   )
