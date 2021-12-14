@@ -1,6 +1,4 @@
-
-const ADD_TODO = "ADD_TODO"
-const TOGGLE_TODO = "TOGGLE_TODO"
+import { ADD_TODO, TOGGLE_TODO } from "../types/todo_types"
 
 export type TodoItem = {
   id: number

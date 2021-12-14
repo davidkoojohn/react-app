@@ -1,6 +1,7 @@
 import {ReactNode, useState} from "react";
 import { connect } from "react-redux"
 import { TodoItem } from "../../store/reducers/todo_reducer"
+import { toggleTodo, addTodo } from "../../store/actions/todo_actions"
 
 interface ITodoProps {
   onClick: () => void
@@ -10,14 +11,14 @@ interface ITodoProps {
 const Todo = ({ text, completed, onClick }: ITodoProps) => (
   <li
     onClick={onClick}
-    className={`${completed && "line-though"}`}
+    className={`${completed && "line-through"}`}
   >
     {text}
   </li>
 )
 
 interface ITodoListProps {
-  onClick: (id: number) => void
+  toggleTodo: (id: number) => void
   todos: TodoItem[]
 }
 
@@ -25,13 +26,15 @@ const TodoList = connect(
   (state: any) => ({
     todos: state.todoReducer
   }),
-  (dispatch) => ({})
-)(({ todos, onClick }: ITodoListProps) => {
+  (dispatch) => ({
+    toggleTodo: (id: number) => dispatch(toggleTodo(id))
+  })
+)(({ todos, toggleTodo }: ITodoListProps) => {
   const empty = <div>No data!</div>
   const list = todos.map(item => (
     <Todo
       key={item.id}
-      onClick={() => onClick(item.id)}
+      onClick={() => toggleTodo(item.id)}
       { ...item }
     />
   ))
@@ -76,7 +79,15 @@ const FilterFooter = () => (
   </div>
 )
 
-function AddTodo () {
+interface IAddTodoProps {
+  addTodo: (text: string) => void
+}
+const AddTodo = connect(
+  null,
+  (dispatch) => ({
+    addTodo: (text: string) => dispatch(addTodo(text))
+  })
+)(({ addTodo }: IAddTodoProps) => {
   const [text, setText] = useState<string>("")
   return (
     <div>
@@ -88,7 +99,7 @@ function AddTodo () {
             if (!text.trim()) {
               return
             }
-            console.log(text)
+            addTodo(text)
             setText("")
           }
         }
@@ -103,13 +114,13 @@ function AddTodo () {
       </form>
     </div>
   )
-}
+})
 
 export default function TodoApp () {
   return (
     <>
       <AddTodo/>
-      <TodoList onClick={(id) => console.log(id)}/>
+      <TodoList/>
       <FilterFooter/>
     </>
   )
