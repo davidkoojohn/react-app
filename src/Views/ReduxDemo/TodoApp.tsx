@@ -23,9 +23,21 @@ interface ITodoListProps {
   todos: TodoItem[]
 }
 
+const getVisibilityTodos = (todos: TodoItem[], filter: VisibilityFilters): TodoItem[] => {
+  switch (filter) {
+    case VisibilityFilters.SHOW_ACTIVE:
+      return todos.filter(item => !item.completed)
+    case VisibilityFilters.SHOW_COMPLETED:
+      return todos.filter(item => item.completed)
+    case VisibilityFilters.SHOW_ALL:
+    default:
+      return todos
+  }
+}
+
 const TodoList = connect(
   (state: any) => ({
-    todos: state.todoReducer
+    todos: getVisibilityTodos(state.todoReducer, state.visibilityFilter)
   }),
   (dispatch) => ({
     toggleTodo: (id: number) => dispatch(toggleTodo(id))
