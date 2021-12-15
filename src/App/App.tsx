@@ -11,6 +11,7 @@ const TodoList = lazy(() => import("../Views/Express/TodoList"))
 const Dashboard = lazy(() => import("../Views/Express/Dashboard"))
 const ReduxDemo = lazy(() => import("../Views/ReduxDemo/ReduxDemo"))
 const TodoApp = lazy(() => import("../Views/ReduxDemo/TodoApp"))
+const AsyncApp = lazy(() => import("../Views/ReduxDemo/Async"))
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path={"about"} element={ <About/> } />
             <Route path={"redux"} element={ <ReduxDemo/> }>
               <Route path={"todo"} element={<TodoApp/>}/>
+              <Route path={"async"} element={<AsyncApp/>}/>
             </Route>
             <Route path={"express"} element={ <Express/> }>
               <Route path={"hooks"} element={ <HookDemo/> }/>

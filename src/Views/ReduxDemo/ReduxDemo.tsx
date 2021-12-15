@@ -8,6 +8,7 @@ export default function ReduxDemo() {
         <nav className={"mx-4"}>
           <Link className={"hover:underline"} to={"/redux/todo"}>Todo</Link>
           <span className={"mx-2"}>|</span>
+          <Link className={"hover:underline"} to={"/redux/async"}>AsyncApp</Link>
         </nav>
       </div>
       <hr/>
