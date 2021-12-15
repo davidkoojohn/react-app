@@ -1,34 +1,29 @@
-import {
-  RECEIVE_NEWS,
-  REQUEST_NEWS,
-  INVALIDATE_CHANNEL,
-  SELECT_CHANNEL
-} from "../types/news_types"
+import {INVALIDATE_CHANNEL, RECEIVE_NEWS, REQUEST_NEWS, SELECT_CHANNEL, TNewsActionTypes} from "../types/news_types"
 import jsonp from "jsonp"
 
 
-export function selectChannel(channel: string) {
+export function selectChannel(channel: string): TNewsActionTypes {
   return {
     type: SELECT_CHANNEL,
     channel
   }
 }
 
-export function invalidateChannel(channel: string) {
+export function invalidateChannel(channel: string): TNewsActionTypes {
   return {
     type: INVALIDATE_CHANNEL,
     channel
   }
 }
 
-export function requestNews(channel: string) {
+export function requestNews(channel: string): TNewsActionTypes {
   return {
     type: REQUEST_NEWS,
     channel
   }
 }
 
-export function receiveNews(channel: string, res: any) {
+export function receiveNews(channel: string, res: any): TNewsActionTypes {
   return {
     type: RECEIVE_NEWS,
     channel,
@@ -59,7 +54,7 @@ export function fetchNews(channel: string) {
 }
 
 
-export function shouldFetchNews(state: any, channel: string) {
+export function shouldFetchNews(state: any, channel: string): boolean {
   const news = state.newsByList[channel]
   if (!news) {
     return true

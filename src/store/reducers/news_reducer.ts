@@ -3,7 +3,8 @@ import {
   REQUEST_NEWS,
   RECEIVE_NEWS,
   SELECT_CHANNEL,
-  TChannel
+  TNewsActionTypes,
+  IChannel
 } from "../types/news_types"
 
 
@@ -17,11 +18,11 @@ const channelState = {
     { title: "财经", channel: "BA8EE5GMwangning" },
     { title: "军事", channel: "BAI67OGGwangning" },
     { title: "军情", channel: "DE0CGUSJwangning" },
-  ],
+  ] as IChannel[],
   currentChannel: ""
 }
 
-export function selectedNewsChannel(state = channelState, action: any) {
+export function selectedNewsChannel(state = channelState, action: TNewsActionTypes) {
   switch (action.type) {
     case SELECT_CHANNEL:
       return {
@@ -48,7 +49,7 @@ const initialState = {
   didInvalidate: false,
   items: []
 } as TNews
-function news(state: TNews = initialState, action: any): TNews {
+function news(state: TNews = initialState, action: TNewsActionTypes): TNews {
   switch (action.type) {
     case INVALIDATE_CHANNEL:
       return {
@@ -74,7 +75,7 @@ function news(state: TNews = initialState, action: any): TNews {
   }
 }
 
-export function newsByList(state: any = {}, action: any) {
+export function newsByList(state: any = {}, action: TNewsActionTypes) {
   switch (action.type) {
     case INVALIDATE_CHANNEL:
     case REQUEST_NEWS:

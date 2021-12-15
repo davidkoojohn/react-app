@@ -1,14 +1,15 @@
 import { connect } from "react-redux"
 import { fetchNewsIfNeeded, selectChannel, invalidateChannel } from "../../store/actions/news_actions";
-import { TChannel } from "../../store/types/news_types"
+import { IChannel } from "../../store/types/news_types"
+import { RootState } from "../../store/reducers"
 
 interface IChannelProps {
-  channels: TChannel[],
+  channels: IChannel[],
   currentChannel: string
   setNewsChannel: (channel: string) => void
 }
 const Channel = connect(
-  (state: any) => {
+  (state: RootState) => {
     const { selectedNewsChannel } = state
     const { channels = [], currentChannel } = selectedNewsChannel
     return {
@@ -48,7 +49,7 @@ interface INewsListProps {
   lastUpdated: number
 }
 const NewsList = connect(
-  (state: any) => {
+  (state: RootState) => {
     const { newsByList, selectedNewsChannel } = state
     const { currentChannel } = selectedNewsChannel
     const { items = [], isFetching = true, didInvalidate, lastUpdated } = newsByList[currentChannel] || {}
