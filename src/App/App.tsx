@@ -12,6 +12,7 @@ const Dashboard = lazy(() => import("../Views/Express/Dashboard"))
 const ReduxDemo = lazy(() => import("../Views/ReduxDemo/ReduxDemo"))
 const TodoApp = lazy(() => import("../Views/ReduxDemo/TodoApp"))
 const AsyncApp = lazy(() => import("../Views/ReduxDemo/Async"))
+const NewsApp = lazy(() => import("../Views/News/News"))
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
         <img src={logo} className="h-12 animate-pulse" alt="logo" />
         <div>
           <Link className={"hover:underline"} to={"/"}>Home</Link>
+          <span className={"mx-2"}>|</span>
+          <Link className={"hover:underline"} to={"/news"}>News</Link>
           <span className={"mx-2"}>|</span>
           <Link className={"hover:underline"} to={"/redux"}>Redux</Link>
           <span className={"mx-2"}>|</span>
@@ -33,6 +36,7 @@ function App() {
           <Routes>
             <Route path={"/"} element={ <Landing/> } />
             <Route path={"about"} element={ <About/> } />
+            <Route path={"news"} element={ <NewsApp/> } />
             <Route path={"redux"} element={ <ReduxDemo/> }>
               <Route path={"todo"} element={<TodoApp/>}/>
               <Route path={"async"} element={<AsyncApp/>}/>
