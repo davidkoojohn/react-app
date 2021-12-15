@@ -6,14 +6,17 @@ import rootReducer from "./reducers";
 
 const loggerMiddleware = createLogger()
 
-const store = createStore(
-  rootReducer,
-  composeWithDevTools(
-    applyMiddleware(
-      loggerMiddleware,
-      thunkMiddleware,
-    )
-  )
-)
 
-export default store
+function configureStore(preloadState: any = undefined) {
+  const middlewares = [thunkMiddleware, loggerMiddleware]
+  const middlewareEnhancer = applyMiddleware(...middlewares)
+  const composedEnhancers = composeWithDevTools(middlewareEnhancer)
+
+  return createStore(
+    rootReducer,
+    preloadState,
+    composedEnhancers,
+  )
+}
+
+export default configureStore()
