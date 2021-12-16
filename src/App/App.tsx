@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react'
 import { Routes, Route } from "react-router-dom"
 
-import { RouterDemo, Articles, Article, NewArticle, UpdateArticle, ArticleLayout } from "../Views/RouterDemo/RouterDemo"
+import { RouterDemo, Articles, Article, NewArticle, UpdateArticle, ArticleLayout, NotFound } from "../Views/RouterDemo/RouterDemo"
 const AppHeader = lazy(() => import("./AppHeader"))
 const Landing = lazy(() => import("../Views/Landing/Landing"))
 const About = lazy(() => import("../Views/About/About"))
@@ -33,6 +33,7 @@ function App() {
                 <Route path={":id"} element={ <Article/> }/>
                 <Route path={"new"} element={ <NewArticle/> }/>
                 <Route path={":id/update"} element={ <UpdateArticle/> }/>
+                <Route path={"*"} element={ <NotFound/> }/>
               </Route>
             </Route>
             <Route path={"redux"} element={ <ReduxDemo/> }>
