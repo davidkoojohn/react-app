@@ -1,5 +1,8 @@
 import {INVALIDATE_CHANNEL, RECEIVE_NEWS, REQUEST_NEWS, SELECT_CHANNEL, TNewsActionTypes} from "../types/news_types"
 import jsonp from "jsonp"
+import {ThunkAction} from "redux-thunk";
+import {RootState} from "../reducers";
+import {Action} from "redux";
 
 
 export function selectChannel(channel: string): TNewsActionTypes {
@@ -32,24 +35,19 @@ export function receiveNews(channel: string, res: any): TNewsActionTypes {
   }
 }
 
-export function fetchNews(channel: string) {
-  return (dispatch: any) => {
+export function fetchNews(channel: string): ThunkAction<void, RootState, unknown, Action<string>> {
+  return async (dispatch: any) => {
     dispatch(requestNews(channel))
-
-    return new Promise((resolve, reject) => {
+    const json = await new Promise((resolve, reject) => {
       jsonp(`https://3g.163.com/touch/reconstruct/article/list/${channel}/1-5.html`, {
         name: "artiList"
-      },function (err, res) {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(res)
-        }
+      }, (err, res) => {
+        if (err) { reject(err) }
+        else { resolve(res) }
       })
-    }).then(json => {
-      dispatch(receiveNews(channel, json))
-      dispatch(selectChannel(channel))
     })
+    dispatch(receiveNews(channel, json))
+    dispatch(selectChannel(channel))
   }
 }
 
@@ -65,12 +63,12 @@ export function shouldFetchNews(state: any, channel: string): boolean {
   }
 }
 
-export function fetchNewsIfNeeded(channel: string) {
-  return (dispatch: any, getState: any) => {
+export function fetchNewsIfNeeded(channel: string): ThunkAction<void, RootState, unknown, Action<string>> {
+  return async (dispatch: any, getState: any) => {
     if (shouldFetchNews(getState(), channel)) {
       return dispatch(fetchNews(channel))
     }
-    return Promise.resolve()
+    return await Promise.resolve()
   }
 }
 
