@@ -1,7 +1,8 @@
 import React, { lazy, Suspense } from 'react'
-import { Routes, Route, Link } from "react-router-dom"
-import logo from '../assets/logo.svg'
+import { Routes, Route } from "react-router-dom"
 
+import { RouterDemo, Articles, Article, NewArticle, UpdateArticle, ArticleLayout } from "../Views/RouterDemo/RouterDemo"
+const AppHeader = lazy(() => import("./AppHeader"))
 const Landing = lazy(() => import("../Views/Landing/Landing"))
 const About = lazy(() => import("../Views/About/About"))
 const Express = lazy(() => import("../Views/Express/Express"))
@@ -17,32 +18,29 @@ const NewsApp = lazy(() => import("../Views/News/News"))
 function App() {
   return (
     <div className="App">
-      <header className={"px-4 flex items-center text-white bg-gray-900 h-16"}>
-        <img src={logo} className="h-12 animate-pulse" alt="logo" />
-        <div>
-          <Link className={"hover:underline"} to={"/"}>Home</Link>
-          <span className={"mx-2"}>|</span>
-          <Link className={"hover:underline"} to={"/news"}>News</Link>
-          <span className={"mx-2"}>|</span>
-          <Link className={"hover:underline"} to={"/redux"}>Redux</Link>
-          <span className={"mx-2"}>|</span>
-          <Link className={"hover:underline"} to={"/express"}>Express</Link>
-          <span className={"mx-2"}>|</span>
-          <Link className={"hover:underline"} to={"/about"}>About</Link>
-        </div>
-      </header>
+      <Suspense fallback={ <div>Header Loading...</div> }>
+        <AppHeader/>
+      </Suspense>
       <main className={"px-4"}>
         <Suspense fallback={ <div>Loading...</div> }>
           <Routes>
             <Route path={"/"} element={ <Landing/> } />
             <Route path={"about"} element={ <About/> } />
             <Route path={"news"} element={ <NewsApp/> } />
+            <Route path={"router"} element={ <RouterDemo/> }>
+              <Route path={"articles"} element={ <ArticleLayout/> }>
+                <Route index element={ <Articles/> }/>
+                <Route path={":id"} element={ <Article/> }/>
+                <Route path={"new"} element={ <NewArticle/> }/>
+                <Route path={":id/update"} element={ <UpdateArticle/> }/>
+              </Route>
+            </Route>
             <Route path={"redux"} element={ <ReduxDemo/> }>
-              <Route path={"todo"} element={<TodoApp/>}/>
+              <Route index element={<TodoApp/>}/>
               <Route path={"async"} element={<AsyncApp/>}/>
             </Route>
             <Route path={"express"} element={ <Express/> }>
-              <Route path={"hooks"} element={ <HookDemo/> }/>
+              <Route index element={ <HookDemo/> }/>
               <Route path={"patterns"} element={ <Patterns/> }/>
               <Route path={"todolist"} element={ <TodoList/> } />
               <Route path={"dashboard"} element={ <Dashboard/> } />
