@@ -1,14 +1,8 @@
-import { connect } from "react-redux"
+import { connect, ConnectedProps } from "react-redux"
 import { fetchNewsIfNeeded, selectChannel, invalidateChannel } from "../../store/actions/news_actions";
-import { IChannel } from "../../store/types/news_types"
 import { RootState } from "../../store/reducers"
 
-interface IChannelProps {
-  channels: IChannel[],
-  currentChannel: string
-  setNewsChannel: (channel: string) => void
-}
-const Channel = connect(
+const channelConnector = connect(
   (state: RootState) => {
     const { selectedNewsChannel } = state
     const { channels = [], currentChannel } = selectedNewsChannel
@@ -20,7 +14,14 @@ const Channel = connect(
   (dispatch) => ({
     setNewsChannel: (channel: string) => dispatch(selectChannel(channel))
   })
-)(({ channels, currentChannel, setNewsChannel }: IChannelProps) => {
+)
+type TChannelPropsFromRedux = ConnectedProps<typeof channelConnector>
+type TChannelProps = TChannelPropsFromRedux & {
+  // testField: string
+}
+const Channel = channelConnector((
+  { channels, currentChannel, setNewsChannel }: TChannelProps
+) => {
   return (
     <div className={"flex border py-2"}>
       {channels.map(item => (
@@ -38,23 +39,13 @@ const Channel = connect(
   )
 })
 
-
-interface INewsListProps {
-  dispatchNesList: (channel: string) => void
-  invalidateNews: (channel: string) => void
-  channel: string,
-  list: any[]
-  isFetching: boolean
-  didInvalidate: boolean
-  lastUpdated: number
-}
-const NewsList = connect(
+const newsListConnector = connect(
   (state: RootState) => {
     const { newsByList, selectedNewsChannel } = state
     const { currentChannel } = selectedNewsChannel
     const { items = [], isFetching = true, didInvalidate, lastUpdated } = newsByList[currentChannel] || {}
     return {
-      list: items,
+      list: items as any[],
       isFetching,
       didInvalidate,
       lastUpdated,
@@ -67,8 +58,14 @@ const NewsList = connect(
       invalidateNews: (channel: string) => dispatch<any>(invalidateChannel(channel))
     }
   }
-)(({ dispatchNesList, channel, list, isFetching, lastUpdated, invalidateNews }: INewsListProps) => {
-
+)
+type TNewsListPropsFromRedux = ConnectedProps<typeof newsListConnector>
+type TNewsListProps = TNewsListPropsFromRedux & {
+  // test: number
+}
+const NewsList = newsListConnector((
+  { dispatchNesList, channel, list, isFetching, lastUpdated, invalidateNews }: TNewsListProps
+) => {
   dispatchNesList(channel)
 
   const content = (
