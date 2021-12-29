@@ -5,6 +5,7 @@ import todoReducer from "./todo_reducer"
 import visibilityFilter from "./visibility_filter_reducer"
 import { postsBySubreddit, selectedSubreddit } from "./reddit_reducer"
 import { newsByList, selectedNewsChannel } from "./news_reducer"
+import sculptureReducer from "./sculpture_reducer"
 
 const allReducer = {
   productsReducer,
@@ -14,7 +15,8 @@ const allReducer = {
   postsBySubreddit,
   selectedSubreddit,
   newsByList,
-  selectedNewsChannel
+  selectedNewsChannel,
+  sculptureReducer
 }
 
 const rootReducer = combineReducers(allReducer)

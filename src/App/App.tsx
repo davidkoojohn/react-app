@@ -14,6 +14,8 @@ const ReduxDemo = lazy(() => import("../Views/ReduxDemo/ReduxDemo"))
 const TodoApp = lazy(() => import("../Views/ReduxDemo/TodoApp"))
 const AsyncApp = lazy(() => import("../Views/ReduxDemo/Async"))
 const NewsApp = lazy(() => import("../Views/News/News"))
+const BetaApp = lazy(() => import("../Views/Beta/Beta"))
+const Learn = lazy(() => import("../Views/Beta/Learn"))
 
 function App() {
   return (
@@ -27,6 +29,9 @@ function App() {
             <Route path={"/"} element={ <Landing/> } />
             <Route path={"about"} element={ <About/> } />
             <Route path={"news"} element={ <NewsApp/> } />
+            <Route path={"beta"} element={ <BetaApp/> }>
+              <Route index element={ <Learn/> }/>
+            </Route>
             <Route path={"router"} element={ <RouterDemo/> }>
               <Route path={"articles"} element={ <ArticleLayout/> }>
                 <Route index element={ <Articles/> }/>

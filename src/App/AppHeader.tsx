@@ -11,6 +11,8 @@ const AppHeader = () => (
       <span className={"mx-2"}>|</span>
       <Link className={"hover:underline"} to={"/news"}>News</Link>
       <span className={"mx-2"}>|</span>
+      <Link className={"hover:underline"} to={"/beta"}>Beta</Link>
+      <span className={"mx-2"}>|</span>
       <Link className={"hover:underline"} to={"/router"}>Router</Link>
       <span className={"mx-2"}>|</span>
       <Link className={"hover:underline"} to={"/redux"}>Redux</Link>
